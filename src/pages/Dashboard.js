@@ -83,7 +83,7 @@ export default function Dashboard() {
 
     const interval = setInterval(() => {
       checkForUpcomingTasks();
-    }, 60000); // check every 60s
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [fetchTasks, checkForUpcomingTasks]);

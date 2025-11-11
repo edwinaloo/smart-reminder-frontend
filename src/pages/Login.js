@@ -16,10 +16,12 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await axios.post("http://127.0.0.1:5000/login", form);
-      localStorage.setItem("user_id", res.data.user_id);
-      navigate("/dashboard");
+      if (res.status === 200) {
+        localStorage.setItem("user_id", res.data.user_id);
+        navigate("/dashboard");
+      }
     } catch (err) {
-      setMessage(err.response?.data?.message || "Login failed.");
+      setMessage(err.response?.data?.message || "Invalid credentials");
     }
   };
 

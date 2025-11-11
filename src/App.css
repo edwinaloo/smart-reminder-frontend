@@ -1,103 +1,8 @@
-/* Global styles */
+/* General Layout */
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #f3f4f6;
-}
-
-/* Center the auth container */
-.auth-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
-
-/* Auth form styles */
-.auth-form {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 320px;
-  text-align: center;
-}
-
-.auth-form h2 {
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.auth-form input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.auth-form input:focus {
-  border-color: #3b82f6;
-}
-
-.auth-form button {
-  width: 100%;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 10px;
-  transition: background-color 0.3s;
-}
-
-.auth-form button:hover {
-  background-color: #2563eb;
-}
-
-.auth-form p {
-  margin-top: 15px;
-  font-size: 0.9em;
-}
-
-.auth-form a {
-  color: #3b82f6;
-  text-decoration: none;
-}
-
-.auth-form a:hover {
-  text-decoration: underline;
-}
-
-.error {
-  color: red;
-  font-size: 0.9em;
-  margin-bottom: 10px;
-}
-
-/* Quote Box */
-.quote-box {
-  background: linear-gradient(135deg, #9333ea, #3b82f6);
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.quote-box h3 {
-  font-size: 1.4em;
-  margin-bottom: 10px;
-}
-
-.quote-box p {
-  font-size: 1em;
-  font-style: italic;
 }
 
 /* Navbar */
@@ -121,15 +26,58 @@ body {
   cursor: pointer;
   transition: 0.3s;
 }
-
 .logout-btn:hover {
   background: #e5e7eb;
 }
 
-/* Dashboard Layout */
+/* Auth Forms */
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.auth-form {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  text-align: center;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.auth-form button {
+  width: 100%;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.auth-form button:hover {
+  background-color: #2563eb;
+}
+
+.error {
+  color: #dc2626;
+}
+
+/* Dashboard */
 .dashboard {
   background: #f3f4f6;
   min-height: 100vh;
+  padding-bottom: 40px;
 }
 
 .dashboard-container {
@@ -138,6 +86,27 @@ body {
   padding: 30px;
   gap: 30px;
   justify-content: center;
+}
+
+/* Quote Box */
+.quote-box {
+  background: linear-gradient(135deg, #9333ea, #3b82f6);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.quote-box h3 {
+  font-size: 1.4em;
+  margin-bottom: 10px;
+}
+
+.quote-box p {
+  font-size: 1em;
+  font-style: italic;
 }
 
 /* Task Form */
@@ -169,7 +138,6 @@ body {
   cursor: pointer;
   transition: 0.3s;
 }
-
 .task-form button:hover {
   background-color: #2563eb;
 }

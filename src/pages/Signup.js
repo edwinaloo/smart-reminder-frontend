@@ -15,11 +15,13 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://127.0.0.1:5000/register", form);
-      setMessage("Signup successful! Redirecting...");
-      setTimeout(() => navigate("/"), 1500);
+      const res = await axios.post("http://127.0.0.1:5000/register", form);
+      if (res.status === 201) {
+        setMessage("Registered successfully!");
+        setTimeout(() => navigate("/"), 1500);
+      }
     } catch (err) {
-      setMessage(err.response?.data?.message || "Signup failed.");
+      setMessage(err.response?.data?.message || "Registration failed");
     }
   };
 
