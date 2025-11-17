@@ -25,11 +25,34 @@ const requestNotificationPermission = async () => {
 };
 
 export default function Dashboard() {
-  const user_id = localStorage.getItem("user_id");
+  const user_id = Number(localStorage.getItem("user_id"));
+  const token = localStorage.getItem("token");
+  // set axios default header if token present
+  if (token) axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState({ title: "", description: "", due_date: "" });
 
-  // 📥 Fetch tasks (memoized with useCallback)
+  // For editing
+  const [editingTask, setEditingTask] = useState(null); // { id, title, description, due_date }
+
+  // 🌅 DAILY QUOTE MODE (changes once per day)
+  const [quote, setQuote] = useState("");
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const savedQuote = localStorage.getItem("dailyQuote");
+    const savedDate = localStorage.getItem("quoteDate");
+    if (savedQuote && savedDate === today) {
+      setQuote(savedQuote);
+      return;
+    }
+    const random = quotes[Math.floor(Math.random() * quotes.length)];
+    localStorage.setItem("dailyQuote", random);
+    localStorage.setItem("quoteDate", today);
+    setQuote(random);
+  }, []);
+
+  // 📥 Fetch tasks
   const fetchTasks = useCallback(async () => {
     try {
       const res = await axios.get(`http://127.0.0.1:5000/tasks/${user_id}`);
@@ -43,6 +66,7 @@ export default function Dashboard() {
   const checkForUpcomingTasks = useCallback(() => {
     const now = new Date();
     tasks.forEach((t) => {
+      if (!t.due_date) return;
       const due = new Date(t.due_date);
       const diff = due - now;
       if (diff > 0 && diff < 300000) {
@@ -58,7 +82,7 @@ export default function Dashboard() {
   const addTask = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://127.0.0.1:5000/tasks", { ...task, user_id });
+      await axios.post("http://127.0.0.1:5000/tasks", { ...task, user_id }); // token header added globally
       setTask({ title: "", description: "", due_date: "" });
       fetchTasks();
     } catch (err) {
@@ -73,6 +97,30 @@ export default function Dashboard() {
       fetchTasks();
     } catch (err) {
       console.error("Error deleting task:", err);
+    }
+  };
+
+  // ✏️ Start editing a task
+  const startEdit = (t) => {
+    setEditingTask({ id: t.id, title: t.title || "", description: t.description || "", due_date: t.due_date || "" });
+  };
+
+  // ✏️ Cancel editing
+  const cancelEdit = () => setEditingTask(null);
+
+  // ✏️ Submit edit
+  const submitEdit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://127.0.0.1:5000/tasks/${editingTask.id}`, {
+        title: editingTask.title,
+        description: editingTask.description,
+        due_date: editingTask.due_date || null,
+      });
+      setEditingTask(null);
+      fetchTasks();
+    } catch (err) {
+      console.error("Error updating task:", err);
     }
   };
 
@@ -96,7 +144,7 @@ export default function Dashboard() {
         {/* 💡 Motivational Quote Widget */}
         <div className="quote-box">
           <h3>💡 Daily Motivation</h3>
-          <p>{quotes[Math.floor(Math.random() * quotes.length)]}</p>
+          <p>{quote}</p>
         </div>
 
         {/* 📝 Task Form */}
@@ -129,6 +177,39 @@ export default function Dashboard() {
         {/* 📋 Task List */}
         <div className="task-list-container">
           <h2>My Tasks</h2>
+
+          {editingTask && (
+            <div className="task-form-container" style={{ marginBottom: 20, background: "#fffbe6" }}>
+              <h3>Edit Task</h3>
+              <form onSubmit={submitEdit} className="task-form">
+                <input
+                  type="text"
+                  placeholder="Task Title"
+                  value={editingTask.title}
+                  onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Description"
+                  value={editingTask.description}
+                  onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
+                />
+                <input
+                  type="datetime-local"
+                  value={editingTask.due_date}
+                  onChange={(e) => setEditingTask({ ...editingTask, due_date: e.target.value })}
+                />
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button type="submit">Save</button>
+                  <button type="button" onClick={cancelEdit} style={{ background: "#ef4444" }}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           <div className="task-grid">
             {tasks.length === 0 ? (
               <p style={{ textAlign: "center", color: "#666" }}>
@@ -140,12 +221,14 @@ export default function Dashboard() {
                   <h3>{t.title}</h3>
                   <p>{t.description}</p>
                   <p className="due-date">Due: {t.due_date}</p>
-                  <button
-                    onClick={() => deleteTask(t.id)}
-                    className="delete-btn"
-                  >
-                    Delete
-                  </button>
+                  <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                    <button onClick={() => startEdit(t)} className="logout-btn" style={{ background: "#f59e0b" }}>
+                      Edit
+                    </button>
+                    <button onClick={() => deleteTask(t.id)} className="delete-btn">
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))
             )}

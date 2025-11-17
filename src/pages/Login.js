@@ -14,13 +14,27 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage(""); // clear previous messages
+
     try {
+      // Login request
       const res = await axios.post("http://127.0.0.1:5000/login", form);
+
       if (res.status === 200) {
-        localStorage.setItem("user_id", res.data.user_id);
-        navigate("/dashboard");
+        const { token, user_id } = res.data;
+
+        // ✅ Store token and user_id in localStorage
+        localStorage.setItem("token", token);
+        localStorage.setItem("user_id", user_id);
+
+        // ✅ Set axios default Authorization header for all future requests
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        // ✅ Navigate to dashboard
+        navigate("/dashboard", { replace: true });
       }
     } catch (err) {
+      // Show backend message if available
       setMessage(err.response?.data?.message || "Invalid credentials");
     }
   };
@@ -30,10 +44,12 @@ export default function Login() {
       <form onSubmit={handleSubmit} className="auth-form">
         <h2>Login</h2>
         {message && <p className="error">{message}</p>}
+
         <input
           type="email"
           name="email"
           placeholder="Enter your email"
+          value={form.email}
           onChange={handleChange}
           required
         />
@@ -41,9 +57,11 @@ export default function Login() {
           type="password"
           name="password"
           placeholder="Enter your password"
+          value={form.password}
           onChange={handleChange}
           required
         />
+
         <button type="submit">Login</button>
         <p>
           Don’t have an account? <Link to="/signup">Sign up</Link>

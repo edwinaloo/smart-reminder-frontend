@@ -17,8 +17,12 @@ export default function Signup() {
     try {
       const res = await axios.post("http://127.0.0.1:5000/register", form);
       if (res.status === 201) {
-        setMessage("Registered successfully!");
-        setTimeout(() => navigate("/"), 1500);
+        // Auto-login after successful register
+        const loginRes = await axios.post("http://127.0.0.1:5000/login", form);
+        localStorage.setItem("user_id", loginRes.data.user_id);
+        localStorage.setItem("token", loginRes.data.token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${loginRes.data.token}`;
+        navigate("/dashboard");
       }
     } catch (err) {
       setMessage(err.response?.data?.message || "Registration failed");
